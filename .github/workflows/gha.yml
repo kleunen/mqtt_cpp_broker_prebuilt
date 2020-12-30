@@ -27,18 +27,16 @@ jobs:
       run: |
         sudo apt-get install upx-ucl build-essential
         mkdir ${{ runner.temp }}/zlib
-        cd ${{ runner.temp }}/zlib && wget https://zlib.net/zlib-1.2.11.tar.gz
-        cd ${{ runner.temp }}/zlib && tar xzf zlib-1.2.11.tar.gz
-        cd ${{ runner.temp }}/zlib/zlib-1.2.11 && cmake .
-        cd ${{ runner.temp }}/zlib/zlib-1.2.11 && cmake --build . --target zlibstatic  
+        cd ${{ runner.temp }}/zlib && cmake -DZLIB_COMPAT=ON ${{ github.workspace }}/zlib-ng
+        cd ${{ runner.temp }}/zlib && cmake --build . --target zlibstatic  
         mkdir ${{ runner.temp }}/openssl
         cd ${{ runner.temp }}/openssl && wget https://www.openssl.org/source/openssl-1.1.1i.tar.gz
         cd ${{ runner.temp }}/openssl && tar xzf openssl-1.1.1i.tar.gz
-        cd ${{ runner.temp }}/openssl/openssl-1.1.1i && ./config no-dso no-shared no-tests --with-zlib-include=${{ runner.temp }}/zlib/zlib-1.2.11
-        cd ${{ runner.temp }}/openssl/openssl-1.1.1i && make -j $(sysctl -n hw.ncpu)
+        cd ${{ runner.temp }}/openssl/openssl-1.1.1i && ./config no-dso no-shared no-tests --with-zlib-include=${{ runner.temp }}/zlib
+        cd ${{ runner.temp }}/openssl/openssl-1.1.1i && make -j 
         export CFLAGS=${S_CFLAGS} && export CXXFLAGS=${S_CXXFLAGS} && export LDFLAGS=${S_LDFLAGS}
         FLAGS="-DCMAKE_CXX_COMPILER=g++ -DMQTT_USE_STATIC_BOOST=ON -DMQTT_USE_STATIC_OPENSSL=ON  -DMQTT_TEST_1=OFF  -DMQTT_TEST_2=OFF  -DMQTT_TEST_3=OFF -DMQTT_TEST_4=OFF -DMQTT_TEST_5=OFF -DMQTT_TEST_6=OFF -DMQTT_TEST_7=OFF -DMQTT_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release -DMQTT_USE_WS=ON -DMQTT_USE_TLS=ON -DMQTT_USE_STR_CHECK=OFF  -DMQTT_USE_LOG=ON  -DMQTT_STD_ANY=OFF -DMQTT_STD_OPTIONAL=OFF -DMQTT_STD_VARIANT=OFF -DMQTT_STD_STRING_VIEW=OFF -DMQTT_STD_SHARED_PTR_ARRAY=OFF"
-         BOOST_ROOT=$BOOST_ROOT_1_72_0 cmake -S ${{ github.workspace }}/mqtt_cpp -B ${{ runner.temp }}/mqtt_cpp ${FLAGS} -DZLIB_ROOT=${{ runner.temp }}/zlib/zlib-1.2.11 -DOPENSSL_ROOT_DIR=${{ runner.temp }}/openssl/openssl-1.1.1i -DCMAKE_C_FLAGS="${CFLAGS}" -DCMAKE_CXX_FLAGS="${CXXFLAGS}" -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}" 
+         BOOST_ROOT=$BOOST_ROOT_1_72_0 cmake -S ${{ github.workspace }}/mqtt_cpp -B ${{ runner.temp }}/mqtt_cpp ${FLAGS} -DZLIB_ROOT=${{ runner.temp }}/zlib -DOPENSSL_ROOT_DIR=${{ runner.temp }}/openssl/openssl-1.1.1i -DCMAKE_C_FLAGS="${CFLAGS}" -DCMAKE_CXX_FLAGS="${CXXFLAGS}" -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}" 
     - name: Compile
       run: |
         VERBOSE=1 cmake --build ${{ runner.temp }}/mqtt_cpp --target broker        
@@ -63,18 +61,16 @@ jobs:
         brew install boost upx
         export CC="gcc -flto -ffunction-sections -fdata-sections "
         mkdir ${{ runner.temp }}/zlib
-        cd ${{ runner.temp }}/zlib && wget https://zlib.net/zlib-1.2.11.tar.gz
-        cd ${{ runner.temp }}/zlib && tar xzf zlib-1.2.11.tar.gz
-        cd ${{ runner.temp }}/zlib/zlib-1.2.11 && cmake .
-        cd ${{ runner.temp }}/zlib/zlib-1.2.11 && cmake --build . --target zlibstatic   
+        cd ${{ runner.temp }}/zlib && cmake -DZLIB_COMPAT=ON ${{ github.workspace }}/zlib-ng
+        cd ${{ runner.temp }}/zlib && cmake --build . --target zlibstatic   
         mkdir ${{ runner.temp }}/openssl
         cd ${{ runner.temp }}/openssl && wget https://www.openssl.org/source/openssl-1.1.1i.tar.gz
         cd ${{ runner.temp }}/openssl && tar xzf openssl-1.1.1i.tar.gz
-        cd ${{ runner.temp }}/openssl/openssl-1.1.1i && ./config no-dso no-shared no-tests  --with-zlib-include=${{ runner.temp }}\zlib\zlib-1.2.11
+        cd ${{ runner.temp }}/openssl/openssl-1.1.1i && ./config no-dso no-shared no-tests  --with-zlib-include=${{ runner.temp }}/zlib
         cd ${{ runner.temp }}/openssl/openssl-1.1.1i && make -j $(sysctl -n hw.ncpu)
     - name: Configure              
       run: |
-        cmake -S ${{ github.workspace }}/mqtt_cpp -B ${{ runner.temp }}/mqtt_cpp ${{ matrix.pattern }} -DZLIB_ROOT=${{ runner.temp }}/zlib/zlib-1.2.11 -DOPENSSL_ROOT_DIR=${{ runner.temp }}/openssl/openssl-1.1.1i -DCMAKE_CXX_COMPILER=g++ -DMQTT_USE_STATIC_BOOST=ON -DMQTT_USE_STATIC_OPENSSL=ON -DMQTT_TEST_1=OFF  -DMQTT_TEST_2=OFF  -DMQTT_TEST_3=OFF -DMQTT_TEST_4=OFF -DMQTT_TEST_5=OFF -DMQTT_TEST_6=OFF -DMQTT_TEST_7=OFF -DMQTT_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release -DMQTT_USE_WS=ON -DMQTT_USE_TLS=ON -DMQTT_USE_STR_CHECK=OFF  -DMQTT_USE_LOG=ON  -DMQTT_STD_ANY=OFF -DMQTT_STD_OPTIONAL=OFF -DMQTT_STD_VARIANT=OFF -DMQTT_STD_STRING_VIEW=OFF -DMQTT_STD_SHARED_PTR_ARRAY=OFF 
+        cmake -S ${{ github.workspace }}/mqtt_cpp -B ${{ runner.temp }}/mqtt_cpp ${{ matrix.pattern }} -DZLIB_ROOT=${{ runner.temp }}/zlib -DOPENSSL_ROOT_DIR=${{ runner.temp }}/openssl/openssl-1.1.1i -DCMAKE_CXX_COMPILER=g++ -DMQTT_USE_STATIC_BOOST=ON -DMQTT_USE_STATIC_OPENSSL=ON -DMQTT_TEST_1=OFF  -DMQTT_TEST_2=OFF  -DMQTT_TEST_3=OFF -DMQTT_TEST_4=OFF -DMQTT_TEST_5=OFF -DMQTT_TEST_6=OFF -DMQTT_TEST_7=OFF -DMQTT_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release -DMQTT_USE_WS=ON -DMQTT_USE_TLS=ON -DMQTT_USE_STR_CHECK=OFF  -DMQTT_USE_LOG=ON  -DMQTT_STD_ANY=OFF -DMQTT_STD_OPTIONAL=OFF -DMQTT_STD_VARIANT=OFF -DMQTT_STD_STRING_VIEW=OFF -DMQTT_STD_SHARED_PTR_ARRAY=OFF 
     - name: Compile
       env:
         CXXFLAGS: -flto -ffunction-sections -fdata-sections
@@ -104,26 +100,24 @@ jobs:
         mkdir ${{ runner.temp }}\openssl
         cd ${{ runner.temp }}\openssl && Invoke-WebRequest -Uri "https://www.openssl.org/source/openssl-1.1.1i.tar.gz" -OutFile "openssl-1.1.1i.tar.gz"
         cd ${{ runner.temp }}\openssl && tar xzf openssl-1.1.1i.tar.gz
-        mkdir ${{ runner.temp }}\zlib
-        cd ${{ runner.temp }}\zlib && Invoke-WebRequest -Uri " https://zlib.net/zlib-1.2.11.tar.gz" -OutFile "zlib-1.2.11.tar.gz"
-        cd ${{ runner.temp }}\zlib && tar xzf zlib-1.2.11.tar.gz
     - name: Build openssl
       shell: cmd
       run: |
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set path=%path%;"C:\Program Files\NASM"
         set CXXFLAGS="/GL"
-        cd ${{ runner.temp }}\zlib\zlib-1.2.11 && cmake .
-        cd ${{ runner.temp }}\zlib\zlib-1.2.11 && cmake --build . --config Release --target zlibstatic
-        copy ${{ runner.temp }}\zlib\zlib-1.2.11\Release\zlibstatic.lib ${{ runner.temp }}\zlib\zlib-1.2.11
-        cd ${{ runner.temp }}\openssl\openssl-1.1.1i && perl Configure  no-dso  no-shared no-tests no-capieng -GL -LTCG VC-WIN64A --with-zlib-include=${{ runner.temp }}\zlib\zlib-1.2.11
+        mkdir ${{ runner.temp }}\zlib
+        cd ${{ runner.temp }}\zlib && cmake -DZLIB_COMPAT=ON ${{ github.workspace }}\zlib-ng
+        cd ${{ runner.temp }}\zlib && cmake --build . --config Release --target zlibstatic
+        copy ${{ runner.temp }}\zlib\Release\zlib.lib ${{ runner.temp }}\zlib
+        cd ${{ runner.temp }}\openssl\openssl-1.1.1i && perl Configure  no-dso  no-shared no-tests no-capieng -GL -LTCG VC-WIN64A --with-zlib-include=${{ runner.temp }}\zlib
         cd ${{ runner.temp }}\openssl\openssl-1.1.1i && nmake
-    - name: Install Dependencies
+    - name: Configure
       run: |
         $env:CXXFLAGS="/GL /D_WIN32_WINNT#0x0601 /DBOOST_THREAD_VERSION#3 /DBOOST_ALLOW_DEPRECATED_HEADERS /DBOOST_ASIO_NO_DEPRECATED"
         $env:LDFLAGS="/LTCG"
         $env:BOOST_ROOT=$env:BOOST_ROOT_1_72_0
-        cmake -A x64 -S ${{ github.workspace }}\mqtt_cpp -B ${{ runner.temp }}\mqtt_cpp -DMQTT_USE_STATIC_BOOST=ON -DMQTT_USE_STATIC_OPENSSL=ON -DMQTT_TEST_1=OFF  -DMQTT_TEST_2=OFF  -DMQTT_TEST_3=OFF -DMQTT_TEST_4=OFF -DMQTT_TEST_5=OFF -DMQTT_TEST_6=OFF -DMQTT_TEST_7=OFF -DMQTT_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release -DMQTT_USE_WS=ON -DMQTT_USE_TLS=ON -DMQTT_USE_STR_CHECK=OFF  -DMQTT_USE_LOG=ON  -DMQTT_STD_ANY=OFF -DMQTT_STD_OPTIONAL=OFF -DMQTT_STD_VARIANT=OFF -DMQTT_STD_STRING_VIEW=OFF -DMQTT_STD_SHARED_PTR_ARRAY=OFF -DOPENSSL_ROOT_DIR=${{ runner.temp }}\openssl\openssl-1.1.1i -DZLIB_ROOT=${{ runner.temp }}\zlib\zlib-1.2.11
+        cmake -A x64 -S ${{ github.workspace }}\mqtt_cpp -B ${{ runner.temp }}\mqtt_cpp -DMQTT_USE_STATIC_BOOST=ON -DMQTT_USE_STATIC_OPENSSL=ON -DMQTT_TEST_1=OFF  -DMQTT_TEST_2=OFF  -DMQTT_TEST_3=OFF -DMQTT_TEST_4=OFF -DMQTT_TEST_5=OFF -DMQTT_TEST_6=OFF -DMQTT_TEST_7=OFF -DMQTT_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release -DMQTT_USE_WS=ON -DMQTT_USE_TLS=ON -DMQTT_USE_STR_CHECK=OFF  -DMQTT_USE_LOG=ON  -DMQTT_STD_ANY=OFF -DMQTT_STD_OPTIONAL=OFF -DMQTT_STD_VARIANT=OFF -DMQTT_STD_STRING_VIEW=OFF -DMQTT_STD_SHARED_PTR_ARRAY=OFF -DOPENSSL_ROOT_DIR=${{ runner.temp }}\openssl\openssl-1.1.1i -DZLIB_ROOT=${{ runner.temp }}\zlib
     - name: Compile
       run: |
         cmake --build ${{ runner.temp }}\mqtt_cpp --parallel 1 --config Release --target broker
