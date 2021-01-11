@@ -73,12 +73,13 @@ TLS Websocket Server options:
 
 # Public broker
 
-A public broker is running on mqtt.kleunen.nl
+A public broker is running on mqtt.kleunen.nl:
+```
 mqtt.kleunen.nl, port 1883, TCP
 mqtt.kleunen.nl, port 8883, TLS
 mqtt.kleunen.nl, port 10080, WS
 mqtt.kleunen.nl, port 100443, WSS
-
+```
 
 
 
