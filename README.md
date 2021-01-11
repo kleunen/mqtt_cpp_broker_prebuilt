@@ -69,37 +69,6 @@ TLS Server options:
 TLS Websocket Server options:
   --wss.port arg                        default port (TLS)
 
-kleunen@kleunen:~$ ./broker --help
-
-General options:
-  --help                                produce help message
-  --cfg arg (=broker.conf)              Load configuration file
-  --verbose arg (=1)                    set verbose level, possible values:
-                                         0 - Fatal
-                                         1 - Error
-                                         2 - Warning
-                                         3 - Info
-                                         4 - Debug
-                                         5 - Trace
-  --certificate arg                     Certificate file for TLS connections
-  --private_key arg                     Private key file for TLS connections
-  --certificate_reload_interval arg (=0)
-                                        Reload interval for the certificate and
-                                        private key files (hours)
-                                         0 - Disabled
-
-TCP Server options:
-  --tcp.port arg                        default port (TCP)
-
-TCP websocket Server options:
-  --ws.port arg                         default port (TCP)
-
-TLS Server options:
-  --tls.port arg                        default port (TLS)
-
-TLS Websocket Server options:
-  --wss.port arg                        default port (TLS)
-
 ```
 
 # Public broker
