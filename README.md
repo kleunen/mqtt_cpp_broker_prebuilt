@@ -1,7 +1,10 @@
-# mqtt_cpp_prebuilt
+# Prebuilt version of mqtt_cpp broker
 
 This repository contains prebuilt versions of the mqtt_cpp broker:
 [mqtt cpp](https://github.com/kleunen/mqtt_cpp)
+
+All releases can be found here:
+[releases](https://github.com/kleunen/mqtt_cpp_broker_prebuilt/releases)
 
 The broker is built with ssl and websockets enabled. You can use the following
 config to run the broker: 
@@ -64,5 +67,15 @@ TLS Server options:
 TLS Websocket Server options:
   --wss.port arg            default port (TLS)
 ```
+
+# Public broker
+
+A public broker is running on mqtt.kleunen.nl
+mqtt.kleunen.nl, port 1883, TCP
+mqtt.kleunen.nl, port 8883, TLS
+mqtt.kleunen.nl, port 10080, WS
+mqtt.kleunen.nl, port 100443, WSS
+
+
 
 
